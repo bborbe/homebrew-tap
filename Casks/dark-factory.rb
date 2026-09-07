@@ -34,8 +34,8 @@ cask "dark-factory" do
 
   binary "dark-factory"
 
-  postflight do
-    system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/dark-factory"]
+  postflight_steps do
+    run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "{{staged_path}}/dark-factory"]
   end
 
   # No zap stanza required
