@@ -34,8 +34,8 @@ cask "distill" do
 
   binary "distill"
 
-  postflight do
-    system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/distill"]
+  postflight_steps do
+    run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "{{staged_path}}/distill"]
   end
 
   # No zap stanza required
