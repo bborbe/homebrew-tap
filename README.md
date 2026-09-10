@@ -8,6 +8,7 @@ Homebrew tap for [bborbe](https://github.com/bborbe) CLI tools.
 brew install bborbe/tap/dark-factory
 brew install bborbe/tap/vault-cli
 brew install bborbe/tap/vault-ui
+brew install bborbe/tap/git-ai-sync
 brew install bborbe/tap/distill
 ```
 
@@ -20,7 +21,8 @@ that repo's scenarios) become brew-installable.
 
 See each repo's `docs/releasing-<repo>.md` for the promotion procedure.
 
-`vault-ui` is the exception: it is a Python package, not a GoReleaser binary.
-Its tag-triggered `release-wheel` workflow (in the vault-ui repo) attaches the
-wheel to a Release automatically, and `.github/workflows/update-vault-ui-cask.yml`
-in this tap keeps the cask's version + sha256 in sync — no manual promotion.
+`vault-ui` and `git-ai-sync` are the exceptions: they are Python packages, not
+GoReleaser binaries. Their tag-triggered `release-wheel` workflows (in each
+source repo) attach the wheel to a Release automatically, and the
+`.github/workflows/update-*-cask.yml` workflows in this tap keep each cask's
+version + sha256 in sync — no manual promotion.

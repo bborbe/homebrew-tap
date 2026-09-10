@@ -33,17 +33,21 @@ cask "git-ai-sync" do
     # Best-effort on purpose: `setup-launchd` bootstraps into the gui domain,
     # which fails from SSH / sandboxed install contexts. A broken agent must
     # not fail the cask install — the caveats carry the manual start command.
+    # The default vault path is home-relative so the agent is registered for
+    # the installing user, not the maintainer.
+    default_vault = File.join(Dir.home, "Documents", "Obsidian", "Personal")
     binary = File.join(Dir.home, ".local", "bin", "git-ai-sync")
     system_command binary,
-                   args: ["setup-launchd", "/Users/bborbe/Documents/Obsidian/Personal"],
+                   args: ["setup-launchd", default_vault],
                    must_succeed: false,
                    print_stdout: true
   end
 
   uninstall_postflight do
+    default_vault = File.join(Dir.home, "Documents", "Obsidian", "Personal")
     binary = File.join(Dir.home, ".local", "bin", "git-ai-sync")
     system_command binary,
-                   args: ["remove-launchd", "/Users/bborbe/Documents/Obsidian/Personal"],
+                   args: ["remove-launchd", default_vault],
                    must_succeed: false,
                    print_stdout: true
     system_command uv,
