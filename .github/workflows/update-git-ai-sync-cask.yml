@@ -1,0 +1,74 @@
+name: Update git-ai-sync cask
+
+on:
+  schedule:
+    - cron: "23 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch latest git-ai-sync release
+        id: rel
+        run: |
+          JSON=$(gh api repos/bborbe/git-ai-sync/releases/latest)
+          TAG=$(printf '%s' "$JSON" | jq -r '.tag_name' | sed 's/^v//')
+          ASSET=$(printf '%s' "$JSON" | jq -r '.assets[] | select(.name | startswith("git_ai_sync-")) | .browser_download_url')
+          if [ -z "$ASSET" ]; then
+            echo "no wheel asset on latest git-ai-sync release — release-wheel workflow may have failed"
+            exit 1
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "asset=$ASSET" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Compute wheel sha256
+        id: sha
+        run: |
+          SHA=$(curl -sL "${{ steps.rel.outputs.asset }}" | shasum -a 256 | awk '{print $1}')
+          echo "sha256=$SHA" >> "$GITHUB_OUTPUT"
+
+      - name: Bump cask if a newer release exists
+        id: bump
+        run: |
+          CURRENT=$(sed -nE 's/^  version "([0-9]+\.[0-9]+\.[0-9]+)"/\1/p' Casks/git-ai-sync.rb)
+          NEW="${{ steps.rel.outputs.tag }}"
+          if [ "$CURRENT" = "$NEW" ]; then
+            echo "cask already current ($CURRENT)"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          sed -i "s/  version \"$CURRENT\"/  version \"$NEW\"/" Casks/git-ai-sync.rb
+          sed -i -E "s/  sha256 \"[0-9a-f]{64}\"/  sha256 \"${{ steps.sha.outputs.sha256 }}\"/" Casks/git-ai-sync.rb
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "new_version=$NEW" >> "$GITHUB_OUTPUT"
+
+      - name: Open bump PR
+        if: steps.bump.outputs.changed == 'true'
+        run: |
+          VER="${{ steps.bump.outputs.new_version }}"
+          if gh pr list --repo "$GITHUB_REPOSITORY" --state open --json title \
+             --jq "any(.title == \"git-ai-sync $VER\")" | grep -q true; then
+            echo "bump PR for $VER already open"
+            exit 0
+          fi
+          BRANCH="update/git-ai-sync-$VER"
+          git checkout -b "$BRANCH"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Casks/git-ai-sync.rb
+          git commit -m "git-ai-sync $VER"
+          git push -u origin "$BRANCH"
+          gh pr create --repo "$GITHUB_REPOSITORY" --title "git-ai-sync $VER" \
+            --body "Auto-bump by the update-git-ai-sync-cask workflow (release-wheel workflow attached a new wheel)." \
+            --base master
+        env:
+          GH_TOKEN: ${{ github.token }}
