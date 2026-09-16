@@ -3,8 +3,8 @@
 # sha256 are bumped by .github/workflows/update-vault-ui-cask.yml when a new
 # vault-ui release is published.
 cask "vault-ui" do
-  version "0.63.6"
-  sha256 "7435ca1d7bf4a461fb4732afe5c2e4d9ddfacdf611363cf0b8220faf7890885a"
+  version "0.67.4"
+  sha256 "786915d2e4631ccc8571b35de6a8e17a477b85968a64f526d0fb0da36be71577"
 
   url "https://github.com/bborbe/vault-ui/releases/download/v#{version}/vault_ui-#{version}-py3-none-any.whl"
 
