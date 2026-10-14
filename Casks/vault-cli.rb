@@ -34,8 +34,8 @@ cask "vault-cli" do
 
   binary "vault-cli"
 
-  postflight do
-    system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/vault-cli"]
+  postflight_steps do
+    run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "{{staged_path}}/vault-cli"]
   end
 
   # No zap stanza required
