@@ -1,0 +1,11 @@
+# maintainer-bot per-repo config - read by the maintainer agents.
+#
+# prReviewer.autoApprove: when true, the pr-reviewer agent posts verdict
+# "approve" as an APPROVE review (counts toward branch-protection);
+# false/absent demotes the approve verdict to a COMMENT, which does not
+# satisfy the master-protection ruleset (required_approving_review_count: 1).
+#
+# release.autoRelease is deliberately absent: a cask tap has no CHANGELOG
+# driven releases of its own.
+prReviewer:
+  autoApprove: true
