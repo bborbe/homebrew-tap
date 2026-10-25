@@ -5,7 +5,14 @@
 # false/absent demotes the approve verdict to a COMMENT, which does not
 # satisfy the master-protection ruleset (required_approving_review_count: 1).
 #
+# autoMerge.trivial: when true, the PR watcher labels mechanically trivial
+# PRs (single-hash cask version/sha256 bumps) for GitHub-native auto-merge,
+# and - together with prReviewer.autoApprove - lets a listed bot's trivial
+# bump take the mechanical-approve path instead of an LLM review.
+#
 # release.autoRelease is deliberately absent: a cask tap has no CHANGELOG
 # driven releases of its own.
 prReviewer:
   autoApprove: true
+autoMerge:
+  trivial: true
