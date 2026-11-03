@@ -3,8 +3,8 @@
 # sha256 are bumped by .github/workflows/update-git-ai-sync-cask.yml when a new
 # git-ai-sync release is published.
 cask "git-ai-sync" do
-  version "0.14.0"
-  sha256 "5a23ccba9df2f996c0b2a38c2deec1af962e061bfc5feb2eeabcc9af4e193a48"
+  version "0.15.0"
+  sha256 "11cddf46fadc251d685a58b3e96a02be4693eb2f4f43a04c0e84a307a5661046"
 
   url "https://github.com/bborbe/git-ai-sync/releases/download/v#{version}/git_ai_sync-#{version}-py3-none-any.whl"
 
